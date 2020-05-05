@@ -1,10 +1,10 @@
-SPECIAL_SYMBOLS = ['`','~','!','@','#','$','%','^','&','*','(',')','_','-','+','=','{','[','}','}','|',':',';','"',"'",'<',',','>','.','?','/']
+SPECIAL_SYMBOLS = '`~!@#$%^&*()_-+=|:;"<>.?/'
+
 
 class UserModel:
-	def __init__(self, *, id, email, username, password):
+	def __init__(self, *, id, email, password):
 		self.id = id
 		self.email = email
-		self.username = username
 		self.password = password
 
 	@staticmethod
@@ -41,5 +41,3 @@ class UserModel:
 		if count_capital_letter < 1:
 			raise ValueError('Invalid password.')
 				
-
-
