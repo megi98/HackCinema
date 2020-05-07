@@ -52,7 +52,7 @@ class Database:
 		  VALUES({movie_id}, '{type}', '{date}', '{time}');
 		'''
 
-		self,cursor.execute(query)
+		self.cursor.execute(query)
 		self.connection.commit()
 
 
@@ -97,6 +97,16 @@ class Database:
 		return projections
 
 
+	def show_all_projections(self):
+		query = 'SELECT * FROM projections'
+		self.cursor.execute(query)
+
+		projections = self.cursor.fetchall()
+		self.connection.commit()
+
+		return projections
+
+
 	def create_user(self, *, email, password):
 		query = f'''
 		INSERT INTO users (email, password)
@@ -120,10 +130,46 @@ class Database:
 		return user
 
 
+	def get_user_by_id(self, *, email):
+		query = f'''
+		SELECT id FROM users
+		  WHERE email = '{email}';
+		'''
+		self.cursor.execute(query)
+
+		user_id = self.cursor.fetchone()
+		self.connection.commit()
+
+		if user_id is None:
+			return 0
+
+		return user_id[0]
+
+
+	def show_all_users(self):
+		query = 'SELECT * FROM users'
+		self.cursor.execute(query)
+
+		users = self.cursor.fetchall()
+		self.connection.commit()
+
+		return users
+
+
 	def make_reservation(self, *, user_id, projection_id, row, col):
 		query = f'''
 		INSERT INTO reservations (user_id, projection_id, row, col)
 		  VALUES({user_id}, {projection_id}, {row}, {col})
+		'''
+
+		self.cursor.execute(query)
+		self.connection.commit()
+
+
+	def del_reservation(self, *, user_id, projection_id, row, col):
+		query = f'''
+		DELETE FROM reservations
+		  WHERE user_id = {user_id} AND projection_id = {projection_id} AND row = {row} AND col = {col};
 		'''
 
 		self.cursor.execute(query)
@@ -145,4 +191,5 @@ class Database:
 
 	def __del__(self):
 		self.connection.close()
-		
+
+
