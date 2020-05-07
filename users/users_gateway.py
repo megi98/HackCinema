@@ -2,9 +2,10 @@ from model import UserModel
 from ..db import Database
 
 
+
 class UserGateway:
 	def __init__(self):
-		self.model = UserModel()
+		self.model = UserModel(id=None, email=None, password=None)
 		self.db = Database()
 
 
@@ -13,20 +14,18 @@ class UserGateway:
 		hashpass = self.model.hash_password(password)
 		self.db.create_user(email=email, password=hashpass)
 
-		
-	def get_movies(self):
-		return self.db.show_movies()
+
+	def get_user_by_id(self, *, email):
+		user = self.db.get_user_by_id(email=email)
+
+		if user == 0:
+			raise Exception("No user with this data. Please sign up.")
+		else:
+			return user
 
 
-	def show_seats_for_projection(self, *, projection_id):
-		return self.db.get_seats(projection_id=projection_id)
+	def show_all_users(self):
+		return self.db.show_all_users()
 
-
-	def make_reservation(self, *, projection_id, row, col):
-		self.db.make_reservation(user_id=self.model.id, projection_id=projection_id, row=row, col=col)
-
-
-	def all(self):
-		pass
 
 
