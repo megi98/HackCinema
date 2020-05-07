@@ -7,4 +7,13 @@ class UserController:
 
 
 	def create_user(self, email, password):
-		user = self.users_gateway.create_user(email=email, password=password)
+		self.users_gateway.create_user(email=email, password=password)
+
+
+	def get_user_by_id(self, email):
+		try:
+			user = self.users_gateway.get_user_by_id(email=email)
+		except Exception as exc:
+			return str(exc)
+
+		return user
