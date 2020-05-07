@@ -13,6 +13,7 @@ class Database:
 		self.connection = sqlite3.connect(DB_NAME)
 		self.cursor = self.connection.cursor()
 
+
 	def create_tables(self):
 		self.cursor.execute(CREATE_MOVIES)
 		self.cursor.execute(CREATE_PROJECTIONS)
@@ -30,6 +31,19 @@ class Database:
 
 		self.cursor.execute(query)
 		self.connection.commit()
+
+
+	def get_movie_by_id(self, *, movie_id):
+		query = f'''
+		SELECT name, rating FROM movies
+		  WHERE id = {movie_id};
+		'''
+		self.cursor.execute(query)
+
+		movie = self.cursor.fetchone()
+		self.connection.commit()
+
+		return movie 
 
 
 	def add_projection(self, *, movie_id, type, date, time):
@@ -55,6 +69,34 @@ class Database:
 		return movies
 
 
+	def show_projections_by_movie_id(self, movie_id):
+		query = f'''
+		SELECT * FROM projections
+		  WHERE movie_id = {movie_id}
+		  ORDER BY date;
+		'''
+		self.cursor.execute(query)
+
+		projections = self.cursor.fetchall()
+		self.connection.commit()
+
+		return projections
+
+
+	def show_projections_by_movie_id_and_date(self, movie_id, date):
+		query = f'''
+		SELECT * FROM projections
+		  WHERE movie_id = {movie_id} AND date LIKE '{date}'
+		  ORDER BY date;
+		'''
+		self.cursor.execute(query)
+
+		projections = self.cursor.fetchall()
+		self.connection.commit()
+
+		return projections
+
+
 	def create_user(self, *, email, password):
 		query = f'''
 		INSERT INTO users (email, password)
@@ -63,6 +105,19 @@ class Database:
 
 		self.cursor.execute(query)
 		self.connection.commit()
+
+
+	def get_user(self, *, email, password):
+		query = f'''
+		SELECT id, email FROM users
+		  WHERE email = '{email}' AND password = '{password}';
+		'''
+		self.cursor.execute(query)
+
+		user = self.cursor.fetchone()
+		self.connection.commit()
+
+		return user
 
 
 	def make_reservation(self, *, user_id, projection_id, row, col):
