@@ -19,3 +19,23 @@ class ReservationGateway:
 		return taken_seats
 
 
+	def available_seats_count(self, *, projection_id):
+		available_seats_count = 100 - len(self.get_taken_seats_for_projection(projection_id=projection_id))
+		return available_seats_count
+
+
+	def check_if_seat_is_available(self, *,projection_id, row, col):
+		seat = row, col
+		taken_seats = self.get_taken_seats_for_projection(projection_id=projection_id)
+
+		if seat in taken_seats:
+			return False
+
+		return True
+
+
+	def check_if_seat_is_out_of_range(self, *, row, col):
+		if row > 10 or col > 10:
+			return False
+
+		return True
