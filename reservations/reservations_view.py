@@ -1,12 +1,9 @@
 from reservations_controller import ReservationController
-from reservation_model import ReservationModel
 
 
 class ReservationView:
 	def __init__(self):
 		self.controller = ReservationController()
-		self.model = ReservationModel(user_id=None, projection_id=None, row=None, col=None)
-		self.num_tickets = None
 
 
 	def show_available_seats_count(self, *, projection_id):
@@ -33,4 +30,27 @@ class ReservationView:
 
 		for row in cinema:
 			print(row)
+
+
+	def make_reservation(self, *, user_id, projection_id):
+		print('Choose seat:')
+		row = int(input('Row: '))
+		col = int(input('Column: '))
+		is_available = self.controller.check_if_seat_is_available(projection_id=projection_id, row=row, col=col)
+
+		while is_available is False:
+			print('This seat is already taken!')
+			print('Choose seat:')
+			row = int(input('Row: '))
+			col = int(input('Column: '))
+			is_available = self.controller.check_if_seat_is_available(projection_id=projection_id, row=row, col=col)
+
+		reservation = self.controller.make_reservation(user_id=user_id, projection_id=projection_id, row=row, col=col)
+		while type(reservation) is str:
+			print(reservation)
+			row = int(input('Row: '))
+			col = int(input('Column: '))
+			reservation = self.controller.make_reservation(user_id=user_id, projection_id=projection_id, row=row, col=col)
+
+		print("Congratulations! You've just made your new reservation")
 
