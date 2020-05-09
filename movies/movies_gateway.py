@@ -1,36 +1,53 @@
 from ..db import Database
+from movie_model import MovieModel
 
 
 class MovieGateway:
 	def __init__(self):
+		self.model = MovieModel(movie_id=None, name=None, rating=None)
 		self.db = Database()
 
 
+	def set_movie(self, movie_id, name, rating):
+		self.model.movie_id = movie_id
+		self.model.name = name
+		self.model.rating = rating
+
+
 	def add_movie(self, *, name, rating):
-		self.db.add_movie(name=name, rating=rating)
+		query = f'''
+		INSERT INTO movies (name, rating)
+		  VALUES('{name}', {rating});
+		'''
+
+		self.db.cursor.execute(query)
+		self.db.connection.commit()
 
 
-	def get_movie_by_id(self, id):
-		movie = self.db.get_movie_by_id(movie_id=id)
-		return movie[0]
+	def get_movie_by_id(self, *, movie_id):
+		query = f'''
+		SELECT name, rating FROM movies
+		  WHERE id = {movie_id};
+		'''
+		self.db.cursor.execute(query)
+
+		movie = self.db.cursor.fetchone()
+		self.db.connection.commit()
+
+		return movie 
 
 
-	def show_all_movies(self):
-		return self.db.show_movies()
+	def get_all_movies(self):
+		query = '''
+		SELECT * FROM movies
+		  ORDER BY rating DESC;
+		'''
+		self.db.cursor.execute(query)
 
+		movies = self.db.cursor.fetchall()
+		self.db.connection.commit()
 
-	def add_projection(self, *, movie_id, type, date, time):
-		self.db.add_projection(movie_id=movie_id, type=type, date=date, time=time)
-
-
-	def get_projections_by_movie_id(self, movie_id):
-		projections = self.db.show_projections_by_movie_id(movie_id)
-		return projections
-
-
-	def get_projections_by_movie_id_and_date(self, movie_id, date):
-		projections = self.db.show_projections_by_movie_id_and_date(movie_id, date)
-		return projections
+		return movies
 
 
 	def get_all_projections(self):
