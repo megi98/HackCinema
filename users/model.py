@@ -5,8 +5,8 @@ SPECIAL_SYMBOLS = '`~!@#$%^&*()_-+=|:;"<>.?/'
 
 
 class UserModel:
-	def __init__(self, *, id, email, password):
-		self.id = id
+	def __init__(self, *, user_id, email, password):
+		self.user_id = user_id
 		self.email = email
 		self.password = password
 
@@ -48,4 +48,3 @@ class UserModel:
 	@staticmethod
 	def hash_password(password):
 		return hashlib.sha512(password.encode()).hexdigest()
-	
