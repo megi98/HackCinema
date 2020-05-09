@@ -2,30 +2,51 @@ from model import UserModel
 from ..db import Database
 
 
-
 class UserGateway:
 	def __init__(self):
-		self.model = UserModel(id=None, email=None, password=None)
+		self.model = UserModel(user_id=None, email=None, password=None)
 		self.db = Database()
 
 
 	def create_user(self, *, email, password):
-		self.model.validate(email, password)
-		hashpass = self.model.hash_password(password)
-		self.db.create_user(email=email, password=hashpass)
+		query = f'''
+		INSERT INTO users (email, password)
+		  VALUES('{email}', '{password}');
+		'''
+
+		self.db.cursor.execute(query)
+		self.db.connection.commit()
 
 
-	def get_user_by_id(self, *, email):
-		user = self.db.get_user_by_id(email=email)
+	def set_user(self, *, email, password):
+		query = f'''
+		SELECT id, email, password FROM users
+		  WHERE email = '{email}' AND password = '{password}';
+		'''
+		self.db.cursor.execute(query)
 
-		if user == 0:
-			raise Exception("No user with this data. Please sign up.")
+		user = self.db.cursor.fetchone()
+		self.db.connection.commit()
+
+		if user is None:
+			return False
 		else:
-			return user
+			self.model.user_id = user[0]
+			self.model.email = user[1]
+			self.model.password = user[2]
+			return True
 
 
-	def show_all_users(self):
-		return self.db.show_all_users()
+	def get_users_id(self):
+		return self.model.user_id
 
 
+	def get_all_users(self):
+		query = 'SELECT * FROM users'
+		self.db.cursor.execute(query)
+
+		users = self.db.cursor.fetchall()
+		self.db.connection.commit()
+
+		return users
 
