@@ -1,42 +1,59 @@
 from controllers import UserController
 
 
-class UserViews:
+class UserView:
 	def __init__(self):
 		self.controller = UserController()
-		self.user_id = None
-
-
-	def get_user_id(self):
-		return self.user_id
-
-
-	def enter_data(self):
-		email = input('Email: ')
-		password = input('Password: ')
-
-		try:
-			self.controller.create_user(email, password)
-		except Exception as err:
-			print(f'{str(err)} Try again!')
-		finally:
-			return self.controller.get_user_by_id(email)
 
 
 	def welcome(self):
-		print('Welcome in HackCinema! Please enter your data to login:')
+		print('Welcome in HackCinema! Please choose an option:')
+		print('''
+			[1] - to login
+			[2] - to signup\n
+			''')
+		command = input('> ')
+
+		while int(command) != 1 and int(command) != 2:
+			print('Not existing option! Try again')
+			command = input('> ')
+
+		return command
+
+
+	def signup(self):
 		email = input('Email: ')
 		password = input('Password: ')
+		action = self.controller.signup(email=email, password=password)
 
-		self.user_id = self.controller.get_user_by_id(email)
+		while type(action) is str:
+			print(action, 'Please try again')
+			email = input('Email: ')
+			password = input('Password: ')
+			action = self.controller.signup(email=email, password=password)
 
-		if self.user_id == 'No user with this data. Please sign up.':
-			print(self.user_id)
-			print('Enter your data: ')
-			self.user_id = self.enter_data()
-			while type(self.user_id) is str:
-				self.user_id = self.enter_data()
-			print('Thank you for your registration!')
+		print('''
+			Thank you for your registration!
+			You are logged in our system now :)\n
+			''')
 
-		print('You are logged in our system now :)')
+
+	def login(self):
+		email = input('Email: ')
+		password = input('Password: ')
+		action = self.controller.login(email=email, password=password)
+
+		while action is False:
+			print('No user with this data. Please try again')
+			email = input('Email: ')
+			password = input('Password: ')
+			action = self.controller.login(email=email, password=password)
+
+		print('You are logged in our system now :)\n')
+
+
+	def show_all_users(self):
+		users = self.controller.get_all_users()
+		for user in users:
+			print(f'[{user[0]}] - {user[1]}')
 
