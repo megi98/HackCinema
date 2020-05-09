@@ -1,8 +1,7 @@
-from user_view import UserView
-from movies_view import MovieView
-from projections_view import ProjectionView
-from reservations_view import ReservationView
-
+from users.views import UserView
+from movies.movies_view import MovieView
+from projections.projections_view import ProjectionView
+from reservations.reservations_view import ReservationView
 
 
 def main():
@@ -33,3 +32,4 @@ def main():
 
 if __name__ == '__main__':
 	main()
+	
